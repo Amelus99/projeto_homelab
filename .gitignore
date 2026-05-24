@@ -1,0 +1,28 @@
+# 1. Ignorar todas as pastas de dados, cache e banco de dados dos containers
+adguard/
+backups_docker/
+bazarr/
+duplicati/
+flaresolverr/
+heimdall/
+homelab/
+jellyfin/
+jellyseerr/
+jellystat/
+mnt_edge50/
+plex/
+prowlarr/
+qbittorrent/
+radarr/
+sonarr/
+stash/
+suwayomi/
+uptime-kuma/
+watchtower/
+
+# 2. Ignorar arquivos soltos de log, txts e históricos locais
+*.txt
+*.log
+*.sqlite
+*.db
+.aider*

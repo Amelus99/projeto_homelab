@@ -1,0 +1,353 @@
+services:
+  # --- DASHBOARD & UTILITÁRIOS ---
+
+  heimdall:
+    image: lscr.io/linuxserver/heimdall:latest
+    container_name: heimdall
+    restart: unless-stopped
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/Recife
+    volumes:
+      - ./heimdall/config:/config
+    ports:
+      - "80:80"
+      - "443:443"
+    networks:
+      - homelab_network
+    deploy:
+      resources:
+        limits:
+          memory: 64M
+
+  duplicati:
+    image: lscr.io/linuxserver/duplicati:latest
+    container_name: duplicati
+    restart: unless-stopped
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/Recife
+      - SETTINGS_ENCRYPTION_KEY=131299-Araujo
+    volumes:
+      - ./duplicati/config:/config
+      - .:/source/homelab:ro
+      - /mnt/media:/source/media:ro
+    ports:
+      - "8200:8200"
+    networks:
+      - homelab_network
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+
+  # --- DOWNLOADS E INDEXADORES ---
+
+  qbittorrent:
+    image: lscr.io/linuxserver/qbittorrent:latest
+    container_name: qbittorrent
+    restart: unless-stopped
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/Recife
+      - WEBUI_PORT=8080
+    volumes:
+      - ./qbittorrent/config:/config
+      - /mnt/media:/downloads
+    ports:
+      - "8080:8080"
+      - "6881:6881"
+      - "6881:6881/udp"
+    networks:
+      - homelab_network
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+
+  prowlarr:
+    image: lscr.io/linuxserver/prowlarr:latest
+    container_name: prowlarr
+    restart: unless-stopped
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/Recife
+    volumes:
+      - ./prowlarr/config:/config
+    ports:
+      - "9696:9696"
+    networks:
+      - homelab_network
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+
+  flaresolverr:
+    image: ghcr.io/flaresolverr/flaresolverr:latest
+    container_name: flaresolverr
+    restart: unless-stopped
+    environment:
+      - LOG_LEVEL=info
+      - TZ=America/Recife
+    ports:
+      - "8191:8191"
+    networks:
+      - homelab_network
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+
+  # --- AUTOMAÇÃO DE MÍDIA ---
+
+  radarr:
+    image: lscr.io/linuxserver/radarr:latest
+    container_name: radarr
+    restart: unless-stopped
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/Recife
+    volumes:
+      - ./radarr/config:/config
+      - /mnt/media:/media
+    ports:
+      - "7878:7878"
+    networks:
+      - homelab_network
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+
+  sonarr:
+    image: lscr.io/linuxserver/sonarr:latest
+    container_name: sonarr
+    restart: unless-stopped
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/Recife
+    volumes:
+      - ./sonarr/config:/config
+      - /mnt/media:/media
+    ports:
+      - "8989:8989"
+    networks:
+      - homelab_network
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+
+  bazarr:
+    image: lscr.io/linuxserver/bazarr:latest
+    container_name: bazarr
+    restart: unless-stopped
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/Recife
+    volumes:
+      - ./bazarr/config:/config
+      - /mnt/media:/media
+    ports:
+      - "6767:6767"
+    networks:
+      - homelab_network
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+
+  jellyseerr:
+    image: fallenbagel/jellyseerr:latest
+    container_name: jellyseerr
+    restart: unless-stopped
+    environment:
+      - TZ=America/Recife
+    volumes:
+      - ./jellyseerr/config:/app/config
+    ports:
+      - "5055:5055"
+    networks:
+      - homelab_network
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+
+  # --- GESTÃO DE MÍDIA & STREAMING ---
+
+  jellyfin:
+    image: jellyfin/jellyfin
+    container_name: jellyfin
+    restart: unless-stopped
+    user: "1000:1000"
+    environment:
+      - JELLYFIN_STORAGE_THRESHOLD_GB=0
+      - JELLYFIN_DATA_DIR=/config
+      - JELLYFIN_CACHE_DIR=/cache
+      - JELLYFIN_CONFIG_DIR=/config/config
+      - JELLYFIN_LOG_DIR=/config/log
+      - JELLYFIN_WEB_DIR=/jellyfin/jellyfin-web
+      - JELLYFIN_FFMPEG=/usr/lib/jellyfin-ffmpeg/ffmpeg
+    ports:
+      - "8096:8096"
+    volumes:
+      - ./jellyfin/config:/config
+      - ./jellyfin/cache:/cache
+      - /mnt/media:/media
+    networks:
+      - homelab_network
+    devices:
+      - /dev/dri/renderD128:/dev/dri/renderD128
+    deploy:
+      resources:
+        limits:
+          memory: 1.5G
+
+  plex:
+    image: lscr.io/linuxserver/plex:latest
+    container_name: plex
+    restart: unless-stopped
+    network_mode: host
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/Recife
+      - VERSION=docker
+    volumes:
+      - ./plex/config:/config
+      - /mnt/media:/data
+    devices:
+      - /dev/dri:/dev/dri
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+
+  # --- ESTATÍSTICAS E MONITORAMENTO ---
+
+  jellystat-db:
+    image: postgres:15-alpine
+    container_name: jellystat-db
+    restart: unless-stopped
+    environment:
+      - POSTGRES_USER=jellystat
+      - POSTGRES_PASSWORD=jellystat_pass
+      - POSTGRES_DB=jellystat
+    volumes:
+      - ./jellystat/db:/var/lib/postgresql/data
+    networks:
+      - homelab_network
+    deploy:
+      resources:
+        limits:
+          memory: 128M
+
+  jellystat:
+    image: cyfershepard/jellystat:latest
+    container_name: jellystat
+    restart: unless-stopped
+    depends_on:
+      - jellystat-db
+    ports:
+      - "3002:3000"
+    environment:
+      - POSTGRES_USER=jellystat
+      - POSTGRES_PASSWORD=jellystat_pass
+      - POSTGRES_DB=jellystat
+      - POSTGRES_IP=jellystat-db
+      - POSTGRES_PORT=5432
+      - JWT_SECRET=131299
+    volumes:
+      - ./jellystat/data:/app/backend/backup-data
+    networks:
+      - homelab_network
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+
+  uptime-kuma:
+    image: louislam/uptime-kuma:1
+    container_name: uptime-kuma
+    restart: unless-stopped
+    ports:
+      - "3001:3001"
+    volumes:
+      - ./uptime-kuma/data:/app/data
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    networks:
+      - homelab_network
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+
+  # --- MANUTENÇÃO E SEGURANÇA ---
+
+  watchtower:
+    image: containrrr/watchtower
+    container_name: watchtower
+    restart: unless-stopped
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      - WATCHTOWER_CLEANUP=true
+      - WATCHTOWER_POLL_INTERVAL=86400
+      - DOCKER_API_VERSION=1.40
+    deploy:
+      resources:
+        limits:
+          memory: 128M
+
+  adguardhome:
+    image: adguard/adguardhome
+    container_name: adguardhome
+    restart: unless-stopped
+    ports:
+      - "53:53/tcp"
+      - "53:53/udp"
+      - "3000:3000/tcp"
+      - "8082:80/tcp"
+    volumes:
+      - ./adguard/work:/opt/adguardhome/work
+      - ./adguard/conf:/opt/adguardhome/conf
+    networks:
+      - homelab_network
+    deploy:
+      resources:
+        limits:
+          memory: 128M
+
+# --- LEITURA & MANGÁS ---
+
+  suwayomi:
+    image: ghcr.io/suwayomi/tachidesk:latest
+    container_name: suwayomi
+    restart: unless-stopped
+    ports:
+      - "4567:4567"
+    environment:
+      - TZ=America/Recife
+    volumes:
+      - ./suwayomi/data:/home/suwayomi/.local/share/Tachidesk
+      - /mnt/media/pessoal/mangas:/mnt/media/mangas # Onde ele vai salvar pro Kavita
+    networks:
+      - homelab_network
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+
+networks:
+  homelab_network:
+    name: homelab_network
+    driver: bridge
