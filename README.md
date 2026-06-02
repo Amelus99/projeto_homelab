@@ -1,4 +1,3 @@
-cat << 'EOF' > README.md
 # 🚀 Projeto Homelab - Raspberry Pi 4B
 
 Bem-vindo ao repositório de infraestrutura do meu Homelab! Este projeto gerencia uma stack de serviços auto-hospedados (Self-Hosted) rodando em um **Raspberry Pi 4B (4GB RAM)** com **Raspbian (ARM64)**.
