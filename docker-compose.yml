@@ -1,25 +1,25 @@
 services:
   # --- DASHBOARD & UTILITÁRIOS ---
 
-  heimdall:
-    image: lscr.io/linuxserver/heimdall:latest
-    container_name: heimdall
-    restart: unless-stopped
-    environment:
-      - PUID=1000
-      - PGID=1000
-      - TZ=America/Recife
-    volumes:
-      - ./heimdall/config:/config
-    ports:
-      - "80:80"
-      - "443:443"
-    networks:
-      - homelab_network
-    deploy:
-      resources:
-        limits:
-          memory: 64M
+#  heimdall:
+#    image: lscr.io/linuxserver/heimdall:latest
+#    container_name: heimdall
+#    restart: unless-stopped
+#    environment:
+#      - PUID=1000
+#      - PGID=1000
+#      - TZ=America/Recife
+#    volumes:
+#      - ./heimdall/config:/config
+#    ports:
+#      - "80:80"
+#      - "443:443"
+#    networks:
+#      - homelab_network
+#    deploy:
+#      resources:
+#        limits:
+#          memory: 64M
 
   duplicati:
     image: lscr.io/linuxserver/duplicati:latest
@@ -234,62 +234,62 @@ services:
 
   # --- ESTATÍSTICAS E MONITORAMENTO ---
 
-  jellystat-db:
-    image: postgres:15-alpine
-    container_name: jellystat-db
-    restart: unless-stopped
-    environment:
-      - POSTGRES_USER=jellystat
-      - POSTGRES_PASSWORD=jellystat_pass
-      - POSTGRES_DB=jellystat
-    volumes:
-      - ./jellystat/db:/var/lib/postgresql/data
-    networks:
-      - homelab_network
-    deploy:
-      resources:
-        limits:
-          memory: 128M
+#  jellystat-db:
+#    image: postgres:15-alpine
+#    container_name: jellystat-db
+#    restart: unless-stopped
+#    environment:
+#      - POSTGRES_USER=jellystat
+#      - POSTGRES_PASSWORD=jellystat_pass
+#      - POSTGRES_DB=jellystat
+#    volumes:
+#      - ./jellystat/db:/var/lib/postgresql/data
+#    networks:
+#      - homelab_network
+#    deploy:
+#      resources:
+#        limits:
+#          memory: 128M
 
-  jellystat:
-    image: cyfershepard/jellystat:latest
-    container_name: jellystat
-    restart: unless-stopped
-    depends_on:
-      - jellystat-db
-    ports:
-      - "3002:3000"
-    environment:
-      - POSTGRES_USER=jellystat
-      - POSTGRES_PASSWORD=jellystat_pass
-      - POSTGRES_DB=jellystat
-      - POSTGRES_IP=jellystat-db
-      - POSTGRES_PORT=5432
-      - JWT_SECRET=131299
-    volumes:
-      - ./jellystat/data:/app/backend/backup-data
-    networks:
-      - homelab_network
-    deploy:
-      resources:
-        limits:
-          memory: 512M
+#  jellystat:
+#    image: cyfershepard/jellystat:latest
+#    container_name: jellystat
+#    restart: unless-stopped
+#    depends_on:
+#      - jellystat-db
+#    ports:
+#      - "3002:3000"
+#    environment:
+#      - POSTGRES_USER=jellystat
+#      - POSTGRES_PASSWORD=jellystat_pass
+#      - POSTGRES_DB=jellystat
+#      - POSTGRES_IP=jellystat-db
+#      - POSTGRES_PORT=5432
+#      - JWT_SECRET=131299
+#    volumes:
+#      - ./jellystat/data:/app/backend/backup-data
+#    networks:
+#      - homelab_network
+#    deploy:
+#      resources:
+#        limits:
+#          memory: 512M
 
-  uptime-kuma:
-    image: louislam/uptime-kuma:1
-    container_name: uptime-kuma
-    restart: unless-stopped
-    ports:
-      - "3001:3001"
-    volumes:
-      - ./uptime-kuma/data:/app/data
-      - /var/run/docker.sock:/var/run/docker.sock:ro
-    networks:
-      - homelab_network
-    deploy:
-      resources:
-        limits:
-          memory: 512M
+#  uptime-kuma:
+#    image: louislam/uptime-kuma:1
+#    container_name: uptime-kuma
+#    restart: unless-stopped
+#    ports:
+#      - "3001:3001"
+#    volumes:
+#      - ./uptime-kuma/data:/app/data
+#      - /var/run/docker.sock:/var/run/docker.sock:ro
+#    networks:
+#      - homelab_network
+#    deploy:
+#      resources:
+#        limits:
+#          memory: 512M
 
   # --- MANUTENÇÃO E SEGURANÇA ---
 
@@ -308,24 +308,24 @@ services:
         limits:
           memory: 128M
 
-  adguardhome:
-    image: adguard/adguardhome
-    container_name: adguardhome
-    restart: unless-stopped
-    ports:
-      - "53:53/tcp"
-      - "53:53/udp"
-      - "3000:3000/tcp"
-      - "8082:80/tcp"
-    volumes:
-      - ./adguard/work:/opt/adguardhome/work
-      - ./adguard/conf:/opt/adguardhome/conf
-    networks:
-      - homelab_network
-    deploy:
-      resources:
-        limits:
-          memory: 128M
+#  adguardhome:
+#    image: adguard/adguardhome
+#    container_name: adguardhome
+#    restart: unless-stopped
+#    ports:
+#      - "53:53/tcp"
+#      - "53:53/udp"
+#      - "3000:3000/tcp"
+#      - "8082:80/tcp"
+#    volumes:
+#      - ./adguard/work:/opt/adguardhome/work
+#      - ./adguard/conf:/opt/adguardhome/conf
+#    networks:
+#      - homelab_network
+#    deploy:
+#      resources:
+#        limits:
+#          memory: 128M
 
 # --- LEITURA & MANGÁS ---
 
