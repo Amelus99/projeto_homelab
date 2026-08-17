@@ -69,5 +69,5 @@ O projeto utiliza *Bind Mounts* relativos (`./nome_do_servico/config`) para mant
 
 1. Clone o repositório na máquina host:
    ```bash
-   git clone [https://github.com/SEU_USUARIO/projeto_homelab.git](https://github.com/SEU_USUARIO/projeto_homelab.git)
+   git clone https://github.com/Amelus99/projeto_homelab.git
    cd projeto_homelab
